@@ -1,0 +1,47 @@
+# =====================================================
+# Skript by GODZILLA1o1
+# Do NOT claim this Skript as your own.
+# Feel free to use and modify, but give proper credit!
+# =====================================================
+
+variables:
+    {tp_request.%player%} = none
+
+command /tpa <player>:
+    permission: tpa.use
+    permission message: &cYou don't have permission to use this command!
+    trigger:
+        if arg-1 is not set:
+            message "&cUsage: &e/tpa <player>" to player
+            stop
+        if arg-1 is player:
+            message "&cYou can't teleport to yourself!" to player
+            stop
+        set {tp_request.%arg-1%} to player
+        message "&aTeleport request sent to &e%arg-1%&a!" to player
+        message "&7You can cancel your request by typing &c/tpdeny" to player
+        message "&e%player% &6has requested to teleport to you!" to arg-1
+        message "&aUse &2/tpaccept &ato accept or &c/tpdeny &cto deny." to arg-1
+
+command /tpaccept:
+    permission: tpa.accept
+    permission message: &cYou don't have permission to use this command!
+    trigger:
+        if {tp_request.%player%} is set:
+            teleport {tp_request.%player%} to player
+            message "&aTeleporting %player% to you!" to player
+            message "&aYou have been teleported to &e%player%!" to {tp_request.%player%}
+            delete {tp_request.%player%}
+        else:
+            message "&cYou have no pending teleport requests!" to player
+
+command /tpdeny:
+    permission: tpa.deny
+    permission message: &cYou don't have permission to use this command!
+    trigger:
+        if {tp_request.%player%} is set:
+            message "&cYou denied the teleport request from &e%{tp_request.%player%}%!" to player
+            message "&cYour teleport request was denied." to {tp_request.%player%}
+            delete {tp_request.%player%}
+        else:
+            message "&cYou have no pending teleport requests!" to player
